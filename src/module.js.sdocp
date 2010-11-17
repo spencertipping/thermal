@@ -1,0 +1,1 @@
+sdocp('src/module.js.sdoc', 'A sample module that gets included into the main namespace. I am in no way\ncondoning using constants for such trivial things, by the way.\n\nhello_world_message = \'Hello world\';\n');

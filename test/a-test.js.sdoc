@@ -1,0 +1,5 @@
+A sample unit test
+
+caterwaul.clone('std', 'error')(function () {
+  hello_world_message === 'Hello world' || error.fail['Wrong message'];
+})();

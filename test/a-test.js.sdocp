@@ -1,0 +1,1 @@
+sdocp('test/a-test.js.sdoc', 'A sample unit test\n\ncaterwaul.clone(\'std\', \'error\')(function () {\n  hello_world_message === \'Hello world\' || error.fail[\'Wrong message\'];\n})();\n');

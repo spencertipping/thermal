@@ -1,0 +1,8 @@
+Sample node.js application
+Runs a 'hello, world' server on port 8080. Don't edit the .js file directly;
+it is regenerated automatically from server.js.sdoc.
+
+require('http').createServer(caterwaul.clone('std')(function (req, res) {
+  res.writeHead(200, {'content-type': 'text/plain'});
+  res.end(hello_world_message);
+})).listen(8080);
