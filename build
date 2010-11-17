@@ -265,7 +265,7 @@ meta::define_form 'meta', sub {
 __baa43e5e8e6e1cd76d4e2de828ceaa4d
 
 meta::data('default-action', 'shell');
-meta::data('libraries', <<'__47490a3293a038ab7e357069aaab6594');
+meta::data('libraries', <<'__863ddeba3e588360d82a02cac7e81b99');
 # URLs of libraries to be downloaded into the lib/ directory.
 http://spencertipping.com/caterwaul/caterwaul.js
 http://spencertipping.com/caterwaul/modules/caterwaul.iter.js
@@ -274,7 +274,8 @@ http://spencertipping.com/caterwaul/modules/caterwaul.continuation.js
 http://spencertipping.com/caterwaul/modules/caterwaul.seq.js
 http://spencertipping.com/caterwaul.db.file/caterwaul.db.file.js
 http://spencertipping.com/montenegro/montenegro.js
-__47490a3293a038ab7e357069aaab6594
+http://spencertipping.com/montenegro/montenegro.jquery.js
+__863ddeba3e588360d82a02cac7e81b99
 
 meta::data('license', <<'__3c6177256de0fddb721f534c3ad8c0ee');
 MIT License
