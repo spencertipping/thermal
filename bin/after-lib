@@ -1,3 +1,4 @@
 #!/bin/bash
 rm client/montenegro.jquery.js
 wget http://spencertipping.com/montenegro/montenegro.jquery.js -O client/montenegro.jquery.js
+wget http://spencertipping.com/jquery.instavalidate/jquery.instavalidate.js -O client/jquery.instavalidate.js
