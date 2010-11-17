@@ -1,0 +1,3 @@
+#!/bin/bash
+rm client/montenegro.jquery.js
+wget http://spencertipping.com/montenegro/montenegro.jquery.js -O client/montenegro.jquery.js

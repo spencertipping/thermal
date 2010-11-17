@@ -1,8 +1,26 @@
-Sample node.js application
-Runs a 'hello, world' server on port 8080. Don't edit the .js file directly;
-it is regenerated automatically from server.js.sdoc.
+Thermal server | Spencer Tipping
+Licensed under the terms of the MIT source code license
 
-require('http').createServer(caterwaul.clone('std')(function (req, res) {
-  res.writeHead(200, {'content-type': 'text/plain'});
-  res.end(hello_world_message);
-})).listen(8080);
+montenegro.clone('std db.file')(function () {
+
+Macros.
+These eliminate some boilerplate later on.
+
+  defsubst[ok[_stuff]]   [qg[res.writeHead(200), res.end(_stuff)]];
+  defsubst[error[_stuff]][qg[res.writeHead(500), res.end(_stuff)]];
+
+Prototype extensions.
+
+  c
+  String.prototype.starts_with(s) = this.indexOf(s) === 0;
+  String.prototype.sanitize()     = this.replace(/^\/+/, '').replace(/\.+/g, '.');
+
+Database.
+
+  var db = caterwaul.db.file('db');
+
+Client files.
+The first thing to do is serve the stuff in client/.
+
+  require('http').createServer(fn[req, res][(require('fs').readFile(req.url.sanitize(), 'ascii', fn[err, data][err ? error[err.toString()] : ok[data]]),
+                                             when[req.url.starts_with('/client')])]).listen(8080)})();

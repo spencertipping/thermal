@@ -1,4 +1,0 @@
-A sample module that gets included into the main namespace. I am in no way
-condoning using constants for such trivial things, by the way.
-
-hello_world_message = 'Hello world';
