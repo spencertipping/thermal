@@ -1,1 +1,1 @@
-sdocp('client//thermal.js.sdoc', 'Thermal page driver | Spencer Tipping\nLicensed under the terms of the MIT source code license\n\n$(montenegro.clone(\'std\')(function () {\n  \'#create-story\' >jqc> $(\'#story\').clone().appendTo(\'#stories\');\n}));\n');
+sdocp('client//thermal.js.sdoc', 'Thermal page driver | Spencer Tipping\nLicensed under the terms of the MIT source code license\n\n$(caterwaul.clone(\'std montenegro.jquery\')(function () {\n  $(\'#stories\').append( html<< div.story[h1[\'A story\']]);\n}));\n');

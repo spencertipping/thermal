@@ -1,6 +1,6 @@
 Thermal page driver | Spencer Tipping
 Licensed under the terms of the MIT source code license
 
-$(montenegro.clone('std')(function () {
-  '#create-story' >jqc> $('#story').clone().appendTo('#stories');
+$(caterwaul.clone('std montenegro.jquery')(function () {
+  $('#stories').append( html<< div.story[h1['A story']]);
 }));
