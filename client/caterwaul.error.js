@@ -1,1 +1,0 @@
-../lib/caterwaul.error.js

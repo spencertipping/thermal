@@ -1,4 +1,5 @@
 #!/bin/bash
-rm client/montenegro.jquery.js
+rm -f client/montenegro.jquery.js client/jquery.instavalidate.js client/jquery.fix.append-multiple.js
 wget http://spencertipping.com/montenegro/montenegro.jquery.js -O client/montenegro.jquery.js
 wget http://spencertipping.com/jquery.instavalidate/jquery.instavalidate.js -O client/jquery.instavalidate.js
+wget http://spencertipping.com/jquery.fix.append-multiple/jquery.fix.append-multiple.js -O client/jquery.fix.append-multiple.js
