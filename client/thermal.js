@@ -21,7 +21,7 @@ $(caterwaul.clone('std seq montenegro.jquery')(function () {
 //   new text.
 
     where*[editable(element) = element.click(fn_[let*[t = $(this), save() = $(this).replaceWith(editable(t.text($(this).val()))), editor = html<< input[value=t.text()]/blur(save).enter(save)]
-                                                 [t.replaceWith(editor), editor.focus().select()]]),
+                                                 [t.replaceWith(editor), editor.focus().select()]]).addClass('editable'),
 
 //   Data models.
 //   A story has a name and a bunch of comments. It also has a 'heat value' computed from its interactions with other stories and the amount of weight put on it by different users. The heat value

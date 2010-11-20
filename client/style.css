@@ -7,3 +7,5 @@ a:hover {text-decoration: underline}
 
 .story   {border: solid 1px #a00; width: 294px}
 .comment {border: solid 1px #888}
+
+.editable {cursor: pointer}
