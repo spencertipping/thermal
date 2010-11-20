@@ -1,4 +1,2 @@
 #!/bin/bash
 sdoc -p client/
-haml client/index.haml > client/index.html
-sass client/style.scss > client/style.css

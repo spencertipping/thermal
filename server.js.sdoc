@@ -23,4 +23,6 @@ Client files.
 The first thing to do is serve the stuff in client/.
 
   require('http').createServer(fn[req, res][(require('fs').readFile(req.url.sanitize(), 'ascii', fn[err, data][err ? error[err.toString()] : ok[data]]),
-                                             when[req.url.starts_with('/client')])]).listen(8080)})();
+                                             when[req.url.starts_with('/client')]),
+                                             
+                                            (ok['[{name: "a story", comments: []}]'], when[req.url.starts_with('/stories')])]).listen(8080)})();
