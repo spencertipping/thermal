@@ -1,28 +1,22 @@
 Thermal server | Spencer Tipping
 Licensed under the terms of the MIT source code license
 
-montenegro.clone('std db.file')(function () {
+caterwaul.clone('std db.file montenegro')(function () {
 
-Macros.
-These eliminate some boilerplate later on.
+HTTP server.
+The HTTP server just serves the composition of the individual services described below.
 
-  defsubst[ok[_stuff]]   [qg[res.writeHead(200), res.end(_stuff)]];
-  defsubst[error[_stuff]][qg[res.writeHead(500), res.end(_stuff)]];
+  require('http').createServer(composition()).listen(8080, '0.0.0.0'),
+  where*[
+    composition() = montenegro.http.compose(story_service.individual, story_service.listing, file_service, http['/favicon.ico'][get = not_found()]),
 
-Prototype extensions.
+  Database.
+  The data is stored in one database. Stories are indexed in the global 'stories' index, and comments are stored as strings in an array on the story.
 
-  c
-  String.prototype.starts_with(s) = this.indexOf(s) === 0;
-  String.prototype.sanitize()     = this.replace(/^\/+/, '').replace(/\.+/g, '.');
+    story_service = let[stories = caterwaul.db.file('stories')] in {individual: http['/stories/_'][get = stories($[1])(ok), post = stories($[1])(post_json())(ok)],
+                                                                       listing: http['/stories']  [get = stories.index('all', ok)]},
 
-Database.
+  File server.
+  When we get a GET request to something starting with /client, we serve from 'client'.
 
-  var db = caterwaul.db.file('db');
-
-Client files.
-The first thing to do is serve the stuff in client/.
-
-  require('http').createServer(fn[req, res][(require('fs').readFile(req.url.sanitize(), 'ascii', fn[err, data][err ? error[err.toString()] : ok[data]]),
-                                             when[req.url.starts_with('/client')]),
-                                             
-                                            (ok['[{name: "a story", comments: []}]'], when[req.url.starts_with('/stories')])]).listen(8080)})();
+    file_service  = http['/client/_'][get = require('fs').readFile('.' + $[0].replace(/\.{2,}/g, '.'), 'ascii', fn[err, data][response.writeHead(200), response.end(data)])]]})();
