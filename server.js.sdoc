@@ -2,21 +2,7 @@ Thermal server | Spencer Tipping
 Licensed under the terms of the MIT source code license
 
 caterwaul.clone('std db.file montenegro')(function () {
-
-HTTP server.
-The HTTP server just serves the composition of the individual services described below.
-
-  require('http').createServer(composition()).listen(8080, '0.0.0.0'),
-  where*[
-    composition() = montenegro.http.compose(story_service.individual, story_service.listing, file_service, http['/favicon.ico'][get = not_found()]),
-
-  Database.
-  The data is stored in one database. Stories are indexed in the global 'stories' index, and comments are stored as strings in an array on the story.
-
-    story_service = let[stories = caterwaul.db.file('stories')] in {individual: http['/stories/_'][get = stories($[1])(ok), post = stories($[1])(post_json())(ok)],
-                                                                       listing: http['/stories']  [get = stories.index('all', ok)]},
-
-  File server.
-  When we get a GET request to something starting with /client, we serve from 'client'.
-
-    file_service  = http['/client/_'][get = require('fs').readFile('.' + $[0].replace(/\.{2,}/g, '.'), 'ascii', fn[err, data][response.writeHead(200), response.end(data)])]]})();
+  let[db = caterwaul.db.file('db')] in
+  caterwaul.montenegro.server(8080) /se[_.file('/client', 'client'),
+                                        _.rpc('/stories', 'Invoke this with no arguments to get the ID of each defined story (as an array)', fn_[db.index('all', this)]),
+                                        _.rpc('/story',   '(name, story?) -> story. Reads or writes story data.', fn[name, story][story ? db(name)(story)(this) : db(name)(this)])]})();

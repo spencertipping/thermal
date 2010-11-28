@@ -14,20 +14,22 @@ $(caterwaul.clone('std seq montenegro.jquery')(function () {
   default behavior for the 'create new story' link.
 
     $.getJSON('/stories', fn[stories][$('#stories').append(stories.map(story))]),
-    $('#toolbar').append( html<< a('Create story')[href='javascript:void(0)']/click(fn_[$('#stories').append(story({name: 'new', comments: []}))])),
+    $('#toolbar').append( html<< a('Create story')[href='javascript:void(0)']/click(fn_[$('#stories').append(story({id: caterwaul.gensym(), name: 'new', comments: []}))])),
 
   Behaviors.
   We want the name of a story to be editable. This can be done by replacing it with a text field when it gets clicked on, and then detecting the blur and replacing the original element with
   new text.
 
-    where*[editable(component)(element) = element.click(fn_[
-             let*[t = $(this), save() = $(this).replaceWith(editable(component)(t.text($(this).val()))), editor = $('<#{component || "input"}>').val(t.text()).blur(save).enter(save)]
-                 [t.replaceWith(editor), editor.focus().select()]]).addClass('editable'),
+    where*[editable(save_cc)(element) = element.addClass('editable').click(fn_[t.replaceWith(editor), editor.focus().select(),
+             where*[t = $(this), save() = $(this).replaceWith(editable(component)(t.text($(this).val()))), editor = html<< input/val(t.text()).blur(save).enter(save)]]),
+
+           hidden(element)        = element.hide(),
+           clickable(cc)(element) = element.attr('href', 'javascript:void(0)').click(cc),
 
   Data models.
   A story has a name and a bunch of comments. It also has a 'heat value' computed from its interactions with other stories and the amount of weight put on it by different users. The heat value
   is computed on the client-side.
 
-           story(json)   = html<< div.story(h1.name(!json.name)%editable(), div.comments(a('Comment')/click(fn_[$(this).parent().append(comment({username: 'me', text: '<text>'}))]),
-                                                                                         !(comment(x) <sm< json.comments))),
-           comment(json) = html<< div.comment(h1.user(!json.username), p(!json.text)%editable('textarea'))]}));
+           story(json)   = html<< div.story(div.small(h1.name(!json.name)%editable(), span.owner(!json.owner)%editable(), div.controls(a('[start]')%clickable())),
+                                            div.details(div.comments(!(comment(x) <sm< json.comments)), div.newcomment(textarea, button('Post')))%hidden),
+           comment(json) = html<< div.comment(span.username(!json.username), p(!json.text))]}));

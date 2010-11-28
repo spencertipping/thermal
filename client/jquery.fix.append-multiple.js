@@ -10,8 +10,9 @@
     var old_method = $.fn[method_name];
 
     $.fn[method_name] = function () {
-      for (var i = 0, l = arguments.length; i < l; ++i)
-        arguments[i].constructor === Array ? this[method_name].apply(this, arguments[i]) : old_method.call(this, arguments[i]);
+      for (var i = 0, l = arguments.length, x; x = arguments[i], i < l; ++i)
+        if (x !== null && x !== undefined)
+          x.constructor === Array ? this[method_name].apply(this, x) : old_method.call(this, x);
       return this;
     };
   };
