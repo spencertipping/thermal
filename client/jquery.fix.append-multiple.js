@@ -3,7 +3,7 @@
 
 // Motivation.
 // jQuery's default append() implementation fails to accept a JavaScript array. This fix extends append() to take multiple arguments and allow arbitrarily nested arrays. (Also applies to
-// prepend(), before(), and after().)
+// prepend(), before(), and after().) Anything that inherits from Array will also work.
 
 (function ($) {
   var replace = function (method_name) {
@@ -12,7 +12,8 @@
     $.fn[method_name] = function () {
       for (var i = 0, l = arguments.length, x; x = arguments[i], i < l; ++i)
         if (x !== null && x !== undefined)
-          x.constructor === Array ? this[method_name].apply(this, x) : old_method.call(this, x);
+          if (x instanceof Array) this[method_name].apply(this, Array.prototype.slice.call(x));
+          else                    old_method.call(this, x);
       return this;
     };
   };
