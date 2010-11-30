@@ -15,14 +15,29 @@
   configuration('montenegro.core', function () {this.shallow('montenegro', {$: jQuery, document: document})}).
 
 // JQuery extension methods.
-// These are used throughout Montenegro.
+// These are used throughout Montenegro. se() is used to create side-effects on elements, which can be useful in the middle of long chains (this works better with the precedence than /se[] does).
+// up() takes either a selector or a number. If you give it a selector, it grabs the nearest matching parent; if you give it a number, it traverses up that many parents.
 
-  tconfiguration('std', 'montenegro.methods', function () {$.fn.se(f) = this /se[f.call(_, _)]}).
+// The nearest() method lets you do approximate matching. For example, suppose you have this setup:
+
+// | div.foo(div > textarea, div > button.save)
+
+// If you want the save button to see the textarea (e.g. from inside a click handler), the obvious solution is $(this).parent().find('textarea'). However, that's a lot of work and doesn't scale
+// well. Better is to say $(this).nearest('textarea'). Note that it doesn't actually return just the single nearest one. It just goes up until it starts finding textareas. Also, woe be unto you
+// if you ask for the nearest of something that isn't there at all...
+
+  tconfiguration('std', 'montenegro.methods', function () {this.configure('montenegro.core').montenegro.$.fn /se[
+    _.se(f)      = this /se[f.call(_, _)],
+    _.up(s)      = s instanceof Number ? s ? this.parent().up(s - 1) : this : this.parents(s).eq(0),
+    _.nearest(s) = this.find(s) /re[_.length ? _ : this.parent().nearest(s)]]}).
 
 //   Event extensions.
-//   Some events are common enough that it's useful to have a handler for them. Hitting the enter key is one of those:
+//   Some events are common enough that it's useful to have a handler for them. Hitting the enter key is one of those. Another is getting a link to have a click action and look active, but not
+//   actually go anywhere.
 
-    tconfiguration('std', 'montenegro.events', function () {$.fn.enter(f) = this.keyup(fn[e][e.which === 13 && f.call(this, e)])}).
+    tconfiguration('std', 'montenegro.events', function () {this.configure('montenegro.core').montenegro.$.fn /se[
+      _.enter(f)     = this.keyup(fn[e][e.which === 13 && f.call(this, e)]),
+      _.clickable(f) = this.attr('href', 'javascript:void(0)').click(f)]}).
 
 // RPC tunneling.
 // You can connect to a server endpoint with a CPS-converted proxy function. You can also send opaque references to the server (presumably so that it can send them back). Here's an example of
@@ -42,9 +57,9 @@
 //   Example: Building a chat client.
 //   In montenegro.server.js.sdoc there's an example of a broadcast chat server. Here's the corresponding client code and some DOM nodes to make it work:
 
-//   | var send = montenegro.rpc('/chat/send');
-//     montenegro.rpc('/chat')(fn[message][$('.log').append( html<< div.message(!message)), this()]);
-//     $('body').append( html<< div(div.log, button('Send'), input));         // This just builds the UI. You could also do this with regular HTML.
+//   | var send = caterwaul.montenegro.rpc('/chat/send');
+//     caterwaul.montenegro.rpc('/chat')(fn[message][$('.log').append(html[div.message(message)]), this()]);
+//     $('body').append(html[div(div.log, button('Send'), input]));         // This just builds the UI. You could also do this with regular HTML.
 //     let/cps[_ <- $('button').click(_)][send($('#input').val())];
 
 //   The 'this()' invocation inside the callback is used when you want to send something back and reuse the callback function. I'm using it here to avoid having to refer to the callback function
@@ -68,41 +83,46 @@
 //     <a class='facebook' href='http://facebook.com/someone'>A Facebook Page</a>
 //   </div>
 
-// | html[ div.person(input.name.nonempty, input.email, a.facebook/attr('href', 'http://facebook.com/someone') > 'A Facebook Page') ]
+// | html[div.person(input.name.nonempty, input.email, a.facebook /attr('href', 'http://facebook.com/someone') > 'A Facebook Page')]
+
+// Note that you can't use hyphens in the class names in Javascript, but if you type underscores they'll be converted into dashes. For example:
+
+// | html[div.first_name]          // becomes <div class='first-name'></div>
 
 //   Automation and event handlers.
 //   You can get the jQuery shell for an element by using the '/' operator. The right-hand side is an invocation on the jQuery shell; for example:
 
 //   | $('<a>').addClass('foo').click(fn_[...]).mouseover(fn_[...])
 //     // can be written as:
-//     html[ a.foo/click(fn_[...]).mouseover(fn_[...]) ]
+//     html[a.foo /click(fn_[...]).mouseover(fn_[...])]
 
 //   Anything after a '/' for an element is not considered to be HTML, so you'll have to use another html[] if you want to create elements to pass into a jQuery function. For example:
 
-//   | html[a.foo/append(span('some text'))]               // won't do what you want
-//     html[a.foo/append(html[span('some text')])]         // this is the right way to do it
+//   | html[a.foo /append(span('some text'))]              // won't do what you want
+//     html[a.foo /append(html[span('some text')])]        // this is the right way to do it
 //     html[a.foo > span('some text')]                     // even better
 
 //   Evaluating subexpressions.
 //   Going back to the person example, suppose you have a list of people that you want to insert into a div. Here's what that looks like:
 
 //   | var people = seq[...];
-//     var person = fn[p][html[div.person(input.name.nonempty/val(p.name))]];
+//     var person = fn[p][html[div.person(input.name.nonempty /val(p.name))]];
 //     var ui     = html[div.people(people.map(person), button.save('Save'), button.cancel('Cancel'))];
 
-//   Here, the expression 'people.map(person)' gets evaluated as a Javascript expression rather than as markup. The expression should return a string, sequence, array, or jQuery object.
+//   Here, the expression 'people.map(person)' gets evaluated as a Javascript expression rather than as markup. Montenegro knows to do this because 'people' isn't one of the HTML elements it
+//   knows about. Javascript expressions should return strings, sequences, arrays, or jQuery objects. Strings get promoted into text nodes, so you don't have to worry about HTML escaping.
 
 //   Mapping.
 //   You can map an element through a function using the '%' shorthand. For example:
 
 //   | var nonempty = fn_[this.instavalidate(/^.+$/)];
-//     var ui = html[div(input.name%nonempty, input.title%nonempty)]
+//     var ui = html[div(input.name %nonempty, input.title %nonempty)]
 
 //   This isn't quite the same thing as side-effecting. Using the map shorthand replaces the element with whatever your map function returns, which may or may not be desirable.
 
 //   Note that tempting as it is, you can't say this:
 
-//   | html[div((input.name, input.title)%nonempty)]       // can't do this, even though it would be awesome
+//   | html[div((input.name, input.title) %nonempty)]       // can't do this, even though it would be awesome
 
 //   I considered adding a distributive property, but Javascript's syntax is restrictive enough that I don't think it makes sense. It also makes you think too hard about your markup, which isn't
 //   a good thing. The markup should be simple and local, and your modifier functions should be short enough to type several times. (This can be achieved by using a let-binding or similar.)
@@ -131,11 +151,11 @@
         _.elements = caterwaul.util.qw('html head body meta script style link title div a span input button textarea option select form label iframe blockquote code caption ' +
                                        'table tbody tr td th thead tfoot img h1 h2 h3 h4 h5 h6 li ol ul noscript p pre samp sub sup var') /re[seq[!(~_ *[[_, true]])]],
 
-        let*[ref(x)                  = new caterwaul.ref(x),
-             expand = _.expand(tree) = call/cc[fn[cc][opt.unroll[i, ps.length][let*[p = ps[ps.length - (i + 1)], m = tree && tree.match(p[0])][cc(p[1].apply(tree, m) || tree), when[m]], tree]]],
-             is_an_element(tree)     = _.elements[tree.data] || tree[0] && is_an_element(tree[0]),
-             append_single(node, c)  = node.append(c.constructor === String ? document.createTextNode(c) : c),
-             append_multiple(node)   = let[as = seq[~arguments].slice(1)] in node /se[seq[~as *![_ !== null && _ !== undefined && append_single(node, _)]]]] in
+        let*[ref(x)                 = new caterwaul.ref(x),
+             expand = _.expand(t)   = call/cc[fn[cc][opt.unroll[i, ps.length][let*[p = ps[ps.length - (i + 1)], m = t && t.match(p[0])][cc(p[1].apply(t, m) || t), when[m]], t]]],
+             is_an_element(tree)    = _.elements[tree.data] || tree[0] && is_an_element(tree[0]),
+             append_single(node, c) = node.append(c.constructor === String ? document.createTextNode(c) : c),
+             append_multiple(node)  = let[as = seq[~arguments].slice(1)] in node /se[seq[~as *![_ !== null && _ !== undefined && append_single(node, _)]]]] in
 
         _.define_pattern /se[_(qs[_], fn[x][qs[_$(_document.createElement(_tag))].replace({_$: ref($), _document: ref(document), _tag: ref(x.data)}), when[is_an_element(x)]]),
 
@@ -143,9 +163,9 @@
                              where[append(t1, t2)      = is_an_element(t1) && qs[_f(_e, _c)].replace({_f: ref(append_multiple), _e: expand(t1), _c: expand(t2)}),
                                    append_eval(t1, t2) = is_an_element(t1) && qs[_f(_e, _c)].replace({_f: ref(append_multiple), _e: expand(t1), _c: t2})],
 
-                             _(qs[_%_],  fn[t1, t2][qs[_f(_e)].replace({_e: expand(t1), _f: t2})]),
-                             _(qs[_._],  fn[t1, t2][qs[_e.addClass(_c)].replace({_e: expand(t1), _c: ref(t2.data)}), when[is_an_element(t1)]]),
-                             _(qs[_/_],  fn[t1, t2][qs[_e._f].replace({_e: expand(t1), _f: t2})]),
+                             _(qs[_ %_], fn[t1, t2][qs[_f(_e)].replace({_e: expand(t1), _f: t2})]),
+                             _(qs[_._],  fn[t1, t2][qs[_e.addClass(_c)].replace({_e: expand(t1), _c: ref(t2.data.replace(/_/g, '-'))}), when[is_an_element(t1)]]),
+                             _(qs[_ /_], fn[t1, t2][qs[_e._f].replace({_e: expand(t1), _f: t2})]),
                              _(qs[_, _], fn[t1, t2][qs[_1, _2].replace({_1: expand(t1), _2: expand(t2)})])]]]]}).
 
 // Final configuration.
