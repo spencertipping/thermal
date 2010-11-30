@@ -2,7 +2,7 @@ body {font-size: 9pt; font-family: sans-serif}
 #toolbar {position: fixed; top: 10px; left: 10px}
 #stories {width: 900px; margin: auto}
 
-a {color: #35a; text-decoration: none}
+a       {color: #35a; text-decoration: none}
 a:hover {text-decoration: underline}
 
 .story   {border: solid 1px #a00; width: 294px}
