@@ -3,7 +3,8 @@
 
 caterwaul.clone('std db.file montenegro')(function () {
   let[db = caterwaul.db.file('db')] in
-  caterwaul.montenegro.server(8080) /se[_.file('/client', 'client'),
+  caterwaul.montenegro.server(8080) /se[_.alias('/', '/index.html'),
+                                        _.file('', 'client'),
                                         _.rpc('/stories', 'Invoke this with no arguments to get the ID of each defined story (as an array)', fn_[db.index('all', this)]),
                                         _.rpc('/story',   '(name, story?) -> story. Reads or writes story data.', fn[name, story][story ? db(name)(story)(this) : db(name)(this)])]})();
 
