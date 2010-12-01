@@ -3,28 +3,44 @@ Licensed under the terms of the MIT source code license
 
 $(caterwaul.clone('std continuation seq montenegro')(function () {
 
+Page construction.
+The page is fairly simple. There is a list of tickets on the left and a list of comments on the right:
+
+| Progress      Comments
+  |             | comment1
+  | ticket1  ---| comment2
+  |             | comment3
+  | ticket2
+
+Tickets look like this:
+
+| (ticket name) (initials) (status) (energy) (arrow)
+
+And the comments interface looks like this:
+
+| author1: comment text in a paragraph
+  author2: comment text in a paragraph
+  ....
+  [ textarea ] (post button)
+
+There's also a small set of components on the right so that you can manipulate the story details.
+
+  $('body').append(html[div > div.left_column(h1('Progress'), div.all_stories) > div.right_column(h1('Comments'), div.all_comments)]);
+
+  var story = {} /se[_.small_view(o) = html[div.story(span.name > o.name, span.initials > o.initials, a.status_changer(span.status > o.status), span.energy(o.energy), a.arrow('>>'))],
+                     _.comment(o)    = html[div.comment(span.author > o.author, span.text > o.text)],
+                     _.comments(o)   = html[div.comments(seq[~o.comments *+story.comment])]];
+
 RPC setup.
 These functions are CPS-converted interfaces to the server database.
 
   var rpc = caterwaul.montenegro.rpc /re[{stories: _('/stories'), story: _('/story')}];
 
-MVC components.
-These construct views and controllers for data that gets downloaded from the server.
-
-  var mvc = let[called(x)(e) = e.attr('id', x), isa(x)(e) = e.attr('isa', x)] in
-            {story: let[comment_post_ui() = html[div.post(textarea, button('Post'))], energy_ui(energy) = html[div.energy > div.bar /css({width: energy << 2})]] in
-                    fn[story][html[div.story > div.header(h1(story.name), span.owner(story.owner), energy_ui(story.energy))
-                                             > div.comments(seq[~story.comments *[mvc.comment(_)]]) > comment_post_ui()]]};
-
-Initial body elements.
-There are two things in the body at first. One is a collection of stories, and the other is a link to create a new story. Because the link may be accompanied by others at some point, I'm
-putting it in a toolbar div.
-
-  $('body').append(html[div /attr('id', 'stories') > span.loader('Loading...'), div /attr('id', 'toolbar') > a.create_story('Create new story')]);
-
 User interface toplevel components.
 There are a couple of things that need to happen at the toplevel. First, we need to issue a load request for all of the stories that currently exist. Then, we need to install a sensible
 default behavior for the 'create new story' link.
 
-  let/cps[stories <- rpc.stories(_)][$('#stories').empty().append(stories.map(mvc.story))];
-  $('#toolbar .create-story').clickable(fn_[mvc.story({}).appendTo('#stories')])}));
+  let/cps[ns <- rpc.stories(_),
+          n  <- seq[~ns %x[x] *+_],
+          s  <- rpc.story(n, _)][
+    $('.all-stories').append(story.small_view(s))]}));
