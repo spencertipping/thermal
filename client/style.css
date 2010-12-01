@@ -2,6 +2,8 @@ body {font-size: 9pt; font-family: sans-serif}
 #toolbar {position: fixed; top: 10px; left: 10px}
 #stories {width: 900px; margin: auto}
 
+.right-column {float: right; width: 400px}
+
 a       {color: #35a; text-decoration: none}
 a:hover {text-decoration: underline}
 
