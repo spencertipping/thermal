@@ -28,10 +28,12 @@ There's also a small set of components on the right so that you can manipulate t
   $('body').append(html[div > div.left_column(h1('Progress'), div.all_stories) > div.right_column(h1('Comments'), div.all_comments)]);
 
   var story = {} /se[_.small_view(o) = html[div.story %is(o) > [span.name > o.name, span.initials > o.initials, a.status_changer(span.status > o.status), span.energy(o.energy), a.arrow('>>')]],
-                     _.comment(o)    = html[div.comment(span.author > o.author, span.text > o.text)],
-                     _.comments(o)   = html[div.comments(seq[~o.comments *+story.comment])],
+                     _.comment(o)    = html[div.comment %is(o) > (span.author > o.author, span.text > o.text)],
+                     _.comments(o)   = html[div.comments > div.list(seq[~o.comments *+story.comment]) > div.new_comment(textarea, button('Post'))],
 
                      where[is(x)(e) = e.data('original', x)]];
+
+  let/cps[e <- $('.story .arrow').click(_)][$('.all-comments').empty().append(story.comments($(this).up('.story').data('original')))];
 
 RPC setup.
 These functions are CPS-converted interfaces to the server database.
