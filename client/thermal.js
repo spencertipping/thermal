@@ -2,38 +2,16 @@
 // Licensed under the terms of the MIT source code license
 
 $(caterwaul.clone('std continuation seq montenegro')(function () {
+  $('body').append(html[div > div.toolbar(button.new_story > 'New story') > div.left_column(h1('Progress'), div.all_stories) > div.right_column(h1('Comments'), div.all_comments)]);
 
-// Page construction.
-// The page is fairly simple. There is a list of tickets on the left and a list of comments on the right:
-
-// | Progress      Comments
-//   |             | comment1
-//   | ticket1  ---| comment2
-//   |             | comment3
-//   | ticket2
-
-// Tickets look like this:
-
-// | (ticket name) (initials) (status) (energy) (arrow)
-
-// And the comments interface looks like this:
-
-// | author1: comment text in a paragraph
-//   author2: comment text in a paragraph
-//   ....
-//   [ textarea ] (post button)
-
-// There's also a small set of components on the right so that you can manipulate the story details.
-
-  $('body').append(html[div > div.left_column(h1('Progress'), div.all_stories) > div.right_column(h1('Comments'), div.all_comments)]);
-
-  var story = {} /se[_.small_view(o) = html[div.story %is(o) > [span.name > o.name, span.initials > o.initials, a.status_changer(span.status > o.status), span.energy(o.energy), a.arrow('>>')]],
-                     _.comment(o)    = html[div.comment %is(o) > (span.author > o.author, span.text > o.text)],
+  var story = {} /se[_.small_view(o) = html[div.story   %is(o) > [span.name > o.name, span.initials > o.initials, span.status > o.status, span.energy > o.energy, a.arrow > '>>']],
+                     _.comment(o)    = html[div.comment %is(o) > [span.author > o.author, span.text > o.text]],
                      _.comments(o)   = html[div.comments > div.list(seq[~o.comments *+story.comment]) > div.new_comment(textarea, button('Post'))],
 
                      where[is(x)(e) = e.data('original', x)]];
 
-  let/cps[e <- $('.story .arrow').click(_)][$('.all-comments').empty().append(story.comments($(this).up('.story').data('original')))];
+  $('.story .arrow').live('click', _) /cps[$('.all-comments').empty().append(story.comments($(this).up('.story').data('original')))];
+  $('.new-story')   .live('click', _) /cps[$('.all-stories').append(story.small_view({name: prompt('Please enter a name for your new story.'), comments: []}))];
 
 // RPC setup.
 // These functions are CPS-converted interfaces to the server database.
