@@ -15,7 +15,8 @@ $(caterwaul.clone('std continuation seq montenegro')(function () {
 
                      _.json(ui)      = let[field(f) = {} /se[_[f] = ui.find('.#{f}').text()]] in
                                        caterwaul.util.merge({id: ui.attr('id')}, seq[~'name initials status energy'.split(/\s/) *+field /+caterwaul.util.merge],
-                                                                                 {comments: seq[~ui.find('.comment') *[{author: _.find('.author').text(), text: _.find('.text').text()}]]}),
+                                                            {comments: seq[~ui.find('.comment') *[{author: _.find('.author').text(), text: _.find('.text').text()}]].slice()}),
+
                      _.save(ui)      = story.json(ui) /se[rpc.story(_.id, _)],
                      _.load(ui)      = rpc.story(ui.attr('id'), _) /cps[ui.replaceWith(story.small_view(_))],
 
@@ -24,8 +25,7 @@ $(caterwaul.clone('std continuation seq montenegro')(function () {
   var active_story = null;
   $('.story .arrow')      .live('click', _) /cps[active_story = $('.all-comments').empty().append(story.comments($(this).up('.story').data('original')))];
   $('.new-story')         .live('click', _) /cps[$('.all-stories').append(story.small_view(story.create()) /se[story.save(_)])];
-  $('.new-comment button').live('click', _) /cps[$(this) /se[_.nearest('.list').append(story.comment({author: me.name, text: _.nearest('textarea').val()})),
-                                                             _.nearest('textarea').val(''),
+  $('.new-comment button').live('click', _) /cps[$(this) /se[_.nearest('.list').append(story.comment({author: me.name, text: _.nearest('textarea').cval()})),
                                                              story.save(active_story)]];
 
 Identity.
